@@ -97,4 +97,57 @@ print("この長方形の幅は \(rectangle.width)、高さは \(rectangle.heigh
 print("この長方形の面積は \(rectangle.area) です。") // --> "この長方形の面積は 200.0 です。"
 
 //: ### メソッド
-//: メソッド: 
+//: メソッド: クラス、構造体に関連づけられた関数のこと、他のメソッドやプロパティにアクセスして処理する
+struct Rectangle {
+    // 格納プロパティ(Stored Property)
+    var width: Double
+    var height: Double
+    
+    // 計算プロパティ(Computed Property)
+    var area: Double {
+        return width * height
+    }
+    
+    // インスタンスメソッド(Instance Method)
+    func describe() -> String { // describe: 説明する
+        return "この長方形の幅は \(width)、高さは \(height)、面積は \(area) です。"
+    }
+}
+
+// インスタンスを作成する
+let rectangle = Rectangle(width: 10, height: 20)
+
+// インスタンスメソッドを呼び出す
+print(rectangle.describe()) // "この長方形の幅は 10.0、高さは 20.0、面積は 200.0 です。"
+
+//: ## 配列とループ
+//: ### 配列リテラル
+// 要素を , で区切って [] で囲むだけで簡単に配列を作成できる
+let fruits = [ "apple", "banana", "cherry" ]
+
+//: ### 型
+let numbers = [ 1, 2, 3 ]
+let strings = [ "a", "b", "c" ]
+let mixedTypeArray = [ 1, "a", 2, "b", 3, "c" ] // -> Heterogeneous collection literal could only be inferred to '[Any]'; add explicit type annotation if this is intentional
+
+// [Any] と明示的に型を指定することで、異なる型の要素を混在させることができる
+let mixedTypeArray: [Any] = [ 1, "a", 2, "b", 3, "c" ]
+
+// 空の配列を作成するときは型注釈が必要
+let emptyArray: [String] = []
+
+//: ### インデックス
+// インデックス(配列の要素が何番目かを表す数)を使用して配列の特定の要素にアクセスできる
+let fruits = [ "apple", "banana", "cherry" ]
+print(fruits[0]) // --> "apple"
+
+// 範囲外のインデックスを指定すると実行時エラーになる
+let fruits = [ "apple", "banana", "cherry"]
+print(fruits[3])
+
+//: ### カウント
+// 配列の要素を知りたいときに count というプロパティを使用する
+let fruits = [ "apple", "banana", "cherry" ]
+print(fruits.count) // --> 3
+
+
