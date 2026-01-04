@@ -150,4 +150,80 @@ print(fruits[3])
 let fruits = [ "apple", "banana", "cherry" ]
 print(fruits.count) // --> 3
 
+//: ### 配列の処理
+// forEach(_:)メソッドを使用することで配列の各要素に対して操作できる
+let fruits = [ "apple", "banana", "cherry" ]
+fruits.forEach { fruit in
+    print(fruit)
+    // apple
+    // banana
+    // cherry
+}
 
+let fruits = [ "apple", "banana", "cherry" ]
+
+// map(_:) を使用してフルーツの名前を大文字に変換した配列を作成する
+let uppercasedFruits = fruits.map { fruit in
+    fruit.uppercased() // ["APPLE", "BANANA", "CHERRY"]
+}
+
+// filter(_:) を使用して "banana" を含まない配列を作成する
+let filteredFruits = fruits.filter { fruit in
+    fruit != "banana" // ["apple", "cherry"]
+}
+
+//: ### ループ
+let fruits = [ "apple", "banana", "cherry" ]
+
+// for-in ループを使用して配列の要素を繰り返し処理する(for-in ループは break や continue を支えることがメリットとして挙げられる
+for fruit in fruits {
+    print(fruit)
+}
+
+// continue を使用して "banana" をスキップする
+for fruit in fruits {
+    if fruit == "banana" {
+        continue
+    }
+    print(fruit)
+}
+
+// break を使用して "banana" でループを終了する
+for fruit in fruits {
+    if fruit == "banana" {
+        break
+    }
+    print(fruit)
+}
+
+//: ### 可変の配列
+// let キーワードを使用して配列を定義するとその配列は不変になる
+// 要素を追加、削除、または変更したい場合は、var キーワードを使用して配列を定義する必要がある
+// 不変の配列を定義する
+let immutableFruits = [ "apple", "banana", "cherry" ]
+immutableFruits.append("orange") // --> Cannot use mutating member on immutable value: 'immutableFruits' is a 'let' constant
+
+// 可変の配列を定義する
+var mutabelFruits = [ "apple", "banana", "cherry" ]
+mutabelFruits.append("orange") // 追加できる
+
+//: ### 要素を追加する
+// append(_:) メソッドを使用することで配列の末尾に要素を追加することができる
+var fruits = [ "apple", "banana", "cherry" ]
+fruits.append("orrange")
+
+print(fruits) // --> [ "apple", "banana", "cherry", "orange" ]
+
+//: ### 要素を削除する
+// remove(at:) メソッドを使用して、指定したインデックスの要素を削除することができる
+var fruits = [ "apple", "banana", "cherry" ]
+fruits.remove(at: 1) // 2番目の "banana" の要素を削除する
+
+print(fruits) // --> [ "apple", "cherry ]
+
+//: ### 要素を置換する
+// インデックスを使用することで配列の特定の要素を別の要素に置換することができる
+var fruits = [ "apple", "banana", "cherry" ]
+fruits[0] = "orange"
+
+print(fruits) // --> [ "orange", "banana", "cherry ]
