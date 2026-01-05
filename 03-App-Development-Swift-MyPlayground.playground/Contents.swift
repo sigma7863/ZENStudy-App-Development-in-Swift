@@ -163,7 +163,7 @@ fruits.forEach { fruit in
 let fruits = [ "apple", "banana", "cherry" ]
 
 // map(_:) を使用してフルーツの名前を大文字に変換した配列を作成する
-let uppercasedFruits = fruits.map { fruit in
+let uppercasedFruits = fruits.map { fruit in // uppercase: 大文字
     fruit.uppercased() // ["APPLE", "BANANA", "CHERRY"]
 }
 
@@ -200,11 +200,11 @@ for fruit in fruits {
 // let キーワードを使用して配列を定義するとその配列は不変になる
 // 要素を追加、削除、または変更したい場合は、var キーワードを使用して配列を定義する必要がある
 // 不変の配列を定義する
-let immutableFruits = [ "apple", "banana", "cherry" ]
+let immutableFruits = [ "apple", "banana", "cherry" ] // immutable: 不変
 immutableFruits.append("orange") // --> Cannot use mutating member on immutable value: 'immutableFruits' is a 'let' constant
 
 // 可変の配列を定義する
-var mutabelFruits = [ "apple", "banana", "cherry" ]
+var mutabelFruits = [ "apple", "banana", "cherry" ] // mutabel: 可変
 mutabelFruits.append("orange") // 追加できる
 
 //: ### 要素を追加する
@@ -227,3 +227,51 @@ var fruits = [ "apple", "banana", "cherry" ]
 fruits[0] = "orange"
 
 print(fruits) // --> [ "orange", "banana", "cherry ]
+
+//: ## 構造体
+//: ### カスタム型
+// Int や String などの基本的な型に加えて、ニーズに合った型を自分自身で定義することができる
+// 構造体を使用すると、簡単にカスタム型を作成できる
+// 構造体にイニシャライザを定義しない場合、デフォルトのイニシャライザを自動で作成してくれる(メンバーワイズイニシャライザ)
+struct Account {
+    let id: Int
+    let email: String
+    let username: String
+    let displayName: String
+    
+    func getProfileImageURL() -> URL {
+        /* ... */
+    }
+    
+    /* ... */
+}
+
+// Account のインスタンスを作成する
+let account = Account(id: 1, email: "sannennetaro@example.com", username: "sannennetaro", displayName: "三年寝太郎")
+
+print(account.displayName) // "三年寝太郎"
+print(account.email) // "sannennetaro@example.com"
+print(account.getProfileImageURL())
+
+//: ### 可変性
+// 構造体(struct)は上の "Account" を流用
+
+// 不変の構造体のプロパティは変更できない
+let immutableAccount = Account(id: 1, email: "name@example.com", username: "name", displayName: "Name")
+immutableAccount.displayName = "New Name" // --> Cannot assign to property: 'immutableAccount' is a 'let' constant
+
+// 可変の構造体のプロパティは変更できる
+var mutableAccount = Account(id: 1, email: "name@example.com", username: "name", displayName: "Name")
+mutableAccount.displayName = "New Name"
+
+// 構造体のプロパティをメソッドが変更する場合、そのメソッドを mutating キーワードを使用して定義する必要がある
+struct Account {
+    let id: Int
+    let email: String
+    let username: String
+    let displayName: String
+    
+    mutating func updateDisplayName(_ displayName: String) {
+        self.displayName = displayName
+    }
+}
