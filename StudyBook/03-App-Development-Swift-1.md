@@ -1,3 +1,1132 @@
+Swift でのアプリ開発 3
+今回の環境は、
+
+macOS Big Sur 11.4
+Xcode 12.5.1 (12E507)
+です。
+
+目次
+インスタンス、メソッド、プロパティ
+コンパイルエラー
+配列とループ
+構造体
+インスタンス、メソッド、プロパティ
+このセクションでは、今まで何気なく使用してきたインスタンスについて学習します。
+また、それに属するプロパティやメソッドについて説明します。[1]
+
+インスタンス
+これまで、文字列や数値など、さまざまな値を扱ってきました。
+そして、すべて値に「型」があることを学びました。
+
+これらの「型」の個々の値を、その型の「インスタンス」と呼びます。
+例えば "ニコニコ" は String のインスタンス、2525 は Int のインスタンスです。
+
+インスタンスの作成
+これまで "ニコニコ" や 2525, true のようなリテラル[2]を使用してインスタンスを作成してきました。
+
+しかし、リテラルを使用してインスタンスを作成できるのは String, Int, Bool などの一部の型のみです。
+リテラルが存在しない型では、どのようにインスタンスを作成するのでしょうか。
+
+前節のアルゴリズムと API セクションでは、Date 構造体のインスタンスを作成するために Date() を使用しました。
+Date() は関数のように見えますが、これはイニシャライザと呼ばれる、インスタンスを作成するための特別なメソッドのようなものです。
+
+import Foundation
+
+// 現在の時刻を表す Date 構造体のインスタンスを作成する
+let currentDate = Date()
+print(currentDate)
+
+この Date() は init() を呼び出しています。
+このように型の名前でイニシャライザを呼び出すことも、Date.init() のように明示的にイニシャライザを呼び出すこともできます。
+
+すべての型には 1 つ以上のイニシャライザが実装されています。
+これまでリテラルを使用してインスタンスを作成してきた型でも、イニシャライザを使用してインスタンスを作成することができます。
+
+String() // --> ""
+Int()    // --> 0
+Bool()   // --> false
+
+ここで使用したイニシャライザの詳細は以下のドキュメントを参照してください。
+
+https://developer.apple.com/documentation/swift/string/init()
+https://developer.apple.com/documentation/swift/int/init()
+https://developer.apple.com/documentation/swift/bool/init()
+また、初期化に必要な情報を引数として渡すこともできます。
+例えば、ある時刻を表す Date 構造体のインスタンスを作成したい場合です。
+
+// 1 時間後の時刻を表す Date 構造体のインスタンスを作成する
+let oneHourLater = Date(timeIntervalSinceNow: 3600)
+
+ここでは init(timeIntervalSinceNow:) を呼び出しています。
+このイニシャライザは現在の時刻から指定した秒数後の時刻を表す Date 構造体のインスタンスを作成します。
+
+プロパティ
+プロパティとは、クラス、構造体、列挙型に関連付けられたデータのことです。
+例えば String のインスタンスは count という文字数を表すプロパティを持っています。
+
+プロパティは大きく分けて、格納プロパティと計算プロパティの 2 種類があります。
+格納プロパティは値を格納するプロパティ、計算プロパティは値を格納せず計算するプロパティです。
+
+格納プロパティ
+格納プロパティとは、型やインスタンスに属する定数や変数のことです。
+格納プロパティはクラスと構造体で使用できます。
+
+// 長方形を表す構造体
+struct Rectangle {
+    // 格納プロパティ (Stored Property)
+    var width: Double
+    var height: Double
+}
+
+// インスタンスを作成する
+var rectangle = Rectangle(width: 10, height: 20)
+
+// 格納プロパティの値を取得する
+print("この長方形の幅は \(rectangle.width)、高さは \(rectangle.height) です。") // --> "この長方形の幅は 10.0、高さは 20.0 です。"
+
+// 格納プロパティの値を設定する
+rectangle.width = 30
+rectangle.height = 40
+
+計算プロパティ
+計算プロパティとは、実際の値を格納するのではなく、値を計算するプロパティのことです。
+計算プロパティはクラス、構造体、列挙型で使用できます。
+他の言語のゲッタやセッタに相当します。
+
+計算プロパティの基本的な使用方法は以下のようになります。
+なお、計算プロパティはアクセスされるたびに値が計算されるため、定数として宣言することはできません。
+
+// 正方形を表す構造体
+struct Square {
+    // 格納プロパティ (Stored Property)
+    var sideLength: Double
+
+    // 計算プロパティ (Computed Property)
+    var area: Double {
+        get {
+            // 正方形の面積を計算して返す
+            return sideLength * sideLength
+        }
+        set(newArea) {
+            // 新しい面積から辺の長さを計算して設定する
+            sideLength = sqrt(newArea)
+        }
+    }
+}
+
+// インスタンスを作成する
+var square = Square(sideLength: 10.0)
+
+// 計算プロパティで値を取得する
+print("この正方形の面積は \(square.area) です。") // --> "この正方形の面積は 100.0 です。"
+
+// 計算プロパティで値を設定する
+square.area = 144.0
+
+// 格納プロパティの値を取得する
+print("この正方形の辺の長さは \(square.sideLength) です。") // --> "この正方形の辺の長さは 12.0 です。"
+
+get { /* … */ } には、プロパティの値を返すコードを記述します。
+set { /* … */ } には、プロパティに値を設定するコードを記述します。
+
+なお、読み取り専用計算プロパティは以下のように簡略化して記述されることが多いです。
+
+struct Rectangle {
+    // 格納プロパティ (Stored Property)
+    var width: Double
+    var height: Double
+
+    // 計算プロパティ (Computed Property)
+    var area: Double {
+        return width * height
+    }
+}
+
+// インスタンスを作成する
+let rectangle = Rectangle(width: 10, height: 20)
+
+// 格納プロパティにアクセスする
+print("この長方形の幅は \(rectangle.width)、高さは \(rectangle.height) です。") // --> "この長方形の幅は 10.0、高さは 20.0 です。"
+
+// 計算プロパティにアクセスする
+print("この長方形の面積は \(rectangle.area) です。") // --> "この長方形の面積は 200.0 です。"
+
+メソッド
+メソッドとは、クラス、構造体、列挙型に関連付けられた関数のことです。
+他のメソッドやプロパティにアクセスして処理をします。
+
+struct Rectangle {
+    // 格納プロパティ (Stored Property)
+    var width: Double
+    var height: Double
+
+    // 計算プロパティ (Computed Property)
+    var area: Double {
+        return width * height
+    }
+
+    // インスタンスメソッド (Instance Method)
+    func describe() -> String {
+        return "この長方形の幅は \(width)、高さは \(height)、面積は \(area) です。"
+    }
+}
+
+// インスタンスを作成する
+let rectangle = Rectangle(width: 10, height: 20)
+
+// インスタンスメソッドを呼び出す
+print(rectangle.describe()) // --> "この長方形の幅は 10.0、高さは 20.0、面積は 200.0 です。"
+
+まとめ
+クラス、構造体、列挙型には、それに関連する情報や動作が含まれており、これらをメソッドやプロパティを通じて操作することを学びました。
+メソッドやプロパティを使用する主な理由はコードを整理、単純化するためです。
+
+例えば、文字列が指定した文字列で始まるかを判定する関数を実装したとします。
+
+func hasPrefix(_ string: String, _ prefix: String) -> Bool { /* … */ }
+
+しかし、このような特定の型に属さない関数にすると以下のような問題があります。
+
+どの型に関連している関数なのか分かりづらい
+関係ない関数がオートコンプリートで提案されやすくなり、目的の関数を見つけづらい
+どの型にも関連付けられていないため、ドキュメントが散らかりやすくなり、検索や参照が困難になりやすい
+メソッドやプロパティを使用すると以下のようなメリットがあります。
+
+型に関連する情報や動作がまとめられ、コードが整理しやすくなる
+型に関連するプロパティやメソッドがオートコンプリートで提案されやすくなる
+型ごとにドキュメントを整理できるため、検索や参照が容易になる
+実際、String 型のメソッドとして hasPrefix() が提供されています。
+
+"Hello, World!".hasPrefix("Hello") // --> true
+
+このように、メソッドやプロパティを使用することで、コードの整理、理解、利用が非常に楽になります。
+
+演習問題
+犬と人間の年齢
+Dog は犬を表す構造体です。
+犬の名前と年齢を格納プロパティとして持ちます。
+
+犬の年齢を人間の年齢に換算して取得する計算プロパティ humanAge を Dog 構造体に追加してください。
+犬の 1 年は人間の 7 年に相当するとします。
+
+struct Dog {
+    let name: String
+    let age: Int
+}
+
+自分の名前を吠える犬
+前の問題の Dog 構造体に犬が吠えるメソッド bark() を追加してください。
+このメソッドは犬の名前と一緒に "ワンワン！" という文字列を返すものとします。
+
+演習問題の解答例
+答えを隠す
+
+犬と人間の年齢
+struct Dog {
+    let name: String
+    let age: Int
+    
+    var humanAge: Int {
+        return age * 7
+    }
+}
+
+let dog = Dog(name: "いぬいぬ", age: 3)
+print("\(dog.name) は人間でいうと \(dog.humanAge) 歳です。") // --> "いぬいぬ は人間でいうと 21 歳です。"
+
+犬が吠える
+struct Dog {
+    let name: String
+    let age: Int
+    
+    var humanAge: Int {
+        return age * 7
+    }
+    
+    func bark() -> String {
+        return "\(name) だよ！ワンワン！🐶"
+    }
+}
+
+let dog = Dog(name: "いぬいぬ", age: 3)
+print(dog.bark()) // --> "いぬいぬ だよ！ワンワン！🐶"
+
+今まで学習した内容に関する練習問題を解いてみてください。
+
+練習問題
+問1
+以下の構造体に関するコードを実行した後の結果として正しいものはどれでしょうか。
+
+var mother = personalInformation(age: 30, job: "teacher")
+var father = mother
+father.age = 40
+
+×
+father は定数であるため、コードはエラーになる
+
+×
+mother と father が等号で繋がれたためどちらも age が 40 になる
+
+○
+mother と father は別のインスタンス値なので father だけ age が 40 になる
+
+解説
+答えを隠す
+
+問1
+2行目の let father = mother にて father という新しいインスタンスが作成されます。
+
+ここで personalInformation がクラスであるか構造体であるかで結果が変わります。
+
+personalInformation がクラスで定義されていた場合、 father と mother は同じものを指します。
+そのため father のプロパティを変更すると mother のプロパティも同じように変更されます。
+
+personalInformation が構造体で定義されていた場合、 father と mother は別のものを指します。
+そのため father のプロパティを変更しても mother のプロパティには影響しません。
+
+まとめ
+ある型の値をインスタンスと呼びます。
+また、型にはメソッドとプロパティがあり、その型でのみ利用できる関数や定数・変数を定義することができます。
+
+コンパイルエラー
+Xcode は想定外の Swift のコードに対してエラーを表示します。
+
+例えば文法が間違っている時や、定数に再代入を行おうとした時、メソッドで定義した型でないインスタンスを返す時などです。
+
+プログラマはそのようなミスをします。とても頻繁にします。
+
+Xcode がエラーを出している間はもちろんコンパイルが成功しないため、エラーを修正する必要があります。
+
+エラーを修正するためには、エラーメッセージを読みます。
+英語ですが、読めばどのような結果になっているかが書いてあるので読んでみましょう。
+
+ここで大切なのが、エラーは必ずしも直接の原因を指し示さないということです。
+
+例えば以下のコードがあったとします。
+
+let constant = 10
+constant = 15
+
+このコードは、2行目に Connot assign to value: 'constant' is a 'let' constant というエラーが出ます。
+定数に再代入を行おうとしているためエラーが出ました。
+
+これを直すには、1行目の宣言を let から var にする必要があります。
+
+このように、エラーが出ている行と直すべき行が離れていることがあるためエラーが起きたらコードをよく観察することが必要です。
+
+実際にエラーに遭遇することでエラーの対応を学ぶことができますが、まずは問題を解いてみましょう。
+
+今まで学習した内容に関する練習問題を解いてみてください。
+
+練習問題
+問1
+次のエラーが起こるコードはどれでしょうか。 わからない場合は、playground を開き試してみましょう。
+
+Invalid redeclaration of 'myName'
+
+×
+myName = "Takashi"
+let myName = "Takashi"
+
+×
+let myName = "Takashi"
+myName = "Takahashi"
+
+×
+let myName = "Takashi"
+let myname = "Takashi"
+
+○
+let myName = "Takashi"
+let myName = "Takahashi"
+
+問2
+次のエラーが起こるコードはどれでしょうか。
+
+Cannot find 'myName' in scope
+
+×
+let myName = "Takashi"
+
+×
+let myName = "Takashi"
+let myName = "Takahashi"
+
+○
+myName = "Takashi"
+
+×
+var myName = "Takashi"
+
+問3
+次のエラーが起こるコードはどれでしょうか。
+
+Cannot assign to value: 'myName' is a 'let' constant
+
+×
+let myName = "Takashi"
+
+○
+let myName = "Takashi"
+myName = "Takahashi"
+
+×
+myName = "Takashi"
+
+×
+var myName = "Takashi"
+
+問4
+次のエラーが起こるコードはどれでしょうか。
+
+Cannot assign value of type 'Int' to type 'String'
+
+○
+var myName = "Takashi"
+myName = "Takahashi"
+myName = 1
+
+×
+var myName = "Takashi"
+myName = "Takahashi"
+
+×
+var myName = 23
+myName = 23
+myName = 22.3
+
+×
+var myName = "Takashi"
+var myName = 1
+
+問5
+次の、正の偶数あることを判別する関数は、2行目に Type annotation missing in pattern というエラーが発生してしまいます。 2行目を次のうちどのコードに書き換えたらエラーを解消でき、正しく動作する関数になるでしょうか。
+
+func isPositiveEvenCheck(number: Int) -> Bool {
+    var isPositiveEven
+    if number > 0 {
+        if number % 2 == 0 {
+            isPositiveEven = true
+        } else {
+            isPositiveEven = false
+        }
+    } else {
+        isPositiveEven = false
+    }
+    return isPositiveEven
+}
+
+×
+var isPositiveEven: false
+
+×
+var isPositiveEven = Bool
+
+○
+var isPositiveEven: Bool
+
+×
+let isPositiveEven: Bool
+
+問6
+次のプログラムは、 return が記述されている行に
+
+Cannot find 'isPositiveEven' in scope
+
+というエラーが発生してしまっています。 何故でしょうか。
+
+func isPositiveEvenCheck(number: Int) -> Bool {
+    if number > 0 {
+        if number % 2 == 0 {
+            let isPositiveEven = true
+        } else {
+            let isPositiveEven = false
+        }
+    } else {
+        let isPositiveEven = false
+    }
+    return isPositiveEven
+}
+
+×
+isPositiveEven のスペルが間違っている
+
+×
+let を var にする必要がある
+
+×
+let isPositiveEven = ***　を何回も宣言してしまったため1回だけにする
+
+○
+if文の前に isPositiveEven を Bool 型で宣言しておく必要があった
+
+解説
+答えを隠す
+
+問1
+'myName' の不正な再宣言 というエラーです。
+
+同じスコープで同じ名前の変数・定数は宣言できません。
+
+これに当てはまるのは
+
+let myName = "Takashi"
+let myName = "Takahashi"
+
+です。
+
+問2
+'myName' をこのスコープで見つけることができない というエラーです。
+
+myName の宣言がうまくいっていないためにこのようなエラーになりました。
+
+これに当てはまるのは
+
+myName = "Takashi"
+
+です。
+let または var を使用しないと myName が宣言できません。
+
+変数・定数名が同じにならないように命名は気をつけましょう。
+
+問3
+'myName' が 'let' の定数であるため値を代入できない というエラーです。
+
+let で宣言された定数に再代入を行うことはできません。
+
+このエラーが表示されるのは、以下のコードを記述した時です。
+
+let myName = "Takashi"
+myName = "Takahashi"
+
+let を var に変更しましょう。
+
+問4
+'Int' 型に 'String' 型を代入することはできない というエラーです。
+
+Swift では変数の型を変更したり、変数の型と異なる型の値を代入することはできません。
+
+このエラーが表示されるのは、以下のコードを記述した時です。
+
+var myName = "Takashi"
+myName = "Takahashi"
+myName = 1
+
+3行目の代入ができません。
+String 型の値には String 型の値しか代入できない。
+
+問5
+var isPositiveEven は型が指定されていません。
+宣言時に代入されれば型を指定しなくても型推論で型が決まりますが、そうでない場合は型アノテーションが必要です。
+そのため、 var isPositiveEven: Bool とします。
+1 は正しく型アノテーションできていません。3 のように記述するか、true, false を代入する場合は = で初期化しましょう。
+2 も正しく型アノテーションできていません。3 のように記述するか、初期化する場合は = でtrue, false を代入しましょう。
+4 は型アノテーションに成功していますが、定数で宣言してしまっています。var を用いましょう。
+
+問6
+if 文の中で宣言された変数・定数を if 文の外で使うことはできません。
+
+if number > 0 {
+    if number % 2 == 0 {
+        let isPositiveEven = true
+    } else {
+        let isPositiveEven = false
+    }
+} else {
+    let isPositiveEven = false
+}
+return isPositiveEven
+
+上のコードは関数の一部を抜き出したものです。
+
+この if 文内で宣言されている3つの isPositiveEven は if 文の外では使用できません。
+そのため　return isPositiveEven は参照するものがないためエラーになっています。
+
+これを解決するためには、 isPositiveEven を if 文の外で宣言する必要があります。
+
+そのため 4 が正解です。
+
+それを行い、if 文内で isPostitiveEven を参照するように書き換えると、以下のコードになります。
+
+func isPositiveEvenCheck(number: Int) -> Bool {
+    var isPositiveEven: Bool
+    if number > 0 {
+        if number % 2 == 0 {
+            isPositiveEven = true
+        } else {
+            isPositiveEven = false
+        }
+    } else {
+        isPositiveEven = false
+    }
+    return isPositiveEven
+}
+
+余談ですが、この関数はいささか冗長なので、以下のようにも書くことができます。
+
+func isPositiveEvenCheck(number: Int) -> Bool {
+    return 0 < number && number % 2 == 0
+}
+
+まとめ
+Xcode が表示するエラーはプログラムの誤りを修正する重要なヒントです。
+
+コードを書いてエラーが発生しないことはまずないと言ってもよいです。
+Swift のエラーメッセージに親しめるようになりましょう。
+
+配列とループ
+他のプログラミング言語と同様に Swift のプログラミングにおいても頻繁に使用されるのが配列とループです。
+このセクションでは、配列の基本、それを操作するためのループについて学習します。
+
+配列
+配列とは、同じ型の複数の値を 1 つのコレクションとして格納することができるデータ構造です。
+例えば、お気に入りの動画のリストや連絡先のリストなど、多くのデータを順序付けて管理したい場合に使用します。
+
+Swift では、Array として実装されます。
+配列には、数値や文字列、クラスなど、あらゆる種類の要素を格納できます。
+
+配列リテラル
+Swift で配列を定義する基本的な方法は配列リテラルを使用することです。
+これまで、文字列や数値のリテラルを使用してきましたが、配列もリテラルが用意されています。
+
+let fruits = [ "apple", "banana", "cherry" ]
+
+この例では、文字列の配列が定義されています。
+
+要素を , で区切って [] で囲むだけで簡単に配列を作成できます。
+JavaScript の配列リテラルに似ていますね。
+
+型
+Swift の配列は型安全です。
+基本的に配列の要素は同一の型でなければならず、JavaScript のように複数の型の要素を混在させることはできません。
+
+let numbers = [ 1, 2, 3 ]
+let strings = [ "a", "b", "c" ]
+let mixedTypeArray = [ 1, "a", 2, "b", 3, "c" ] // --> Heterogeneous collection literal could only be inferred to '[Any]'; add explicit type annotation if this is intentional
+
+// [Any] と明示的に型を指定することで、異なる型の要素を混在させることができる
+// let mixedTypeArray: [Any] = [ 1, "a", 2, "b", 3, "c" ]
+
+また、空の配列を作成する場合は型注釈が必要です。
+
+let emptyArray: [String] = []
+
+インデックス
+配列の各要素には、0 から始まるインデックスが割り当てられています。
+このインデックスを使用して、配列の特定の要素にアクセスすることができます。
+
+これも JavaScript の配列に似ていますね。
+
+let fruits = [ "apple", "banana", "cherry" ]
+print(fruits[0]) // --> "apple"
+
+なお、範囲外のインデックスを指定すると実行時エラーになります。
+
+let fruits = [ "apple", "banana", "cherry" ]
+print(fruits[3])
+
+カウント
+配列の要素数を知りたい場合、count というプロパティを使用します。
+
+let fruits = [ "apple", "banana", "cherry" ]
+print(fruits.count) // --> 3
+
+配列の処理
+Swift では、配列の各要素を処理するための多くの方法が提供されています。
+例えば、forEach(_:) というメソッドを使用して、配列の各要素に対して操作を行うことができます。
+
+let fruits = [ "apple", "banana", "cherry" ]
+fruits.forEach { fruit in
+    print(fruit)
+}
+
+他にも、map(_:) や filter(_:) などのメソッドも用意されています。
+
+let fruits = [ "apple", "banana", "cherry" ]
+
+// map(_:) を使用してフルーツの名前を大文字に変換した配列を作成する
+let uppercasedFruits = fruits.map { fruit in
+    fruit.uppercased()
+}
+
+// filter(_:) を使用して "banana" を含まない配列を作成する
+let filteredFruits = fruits.filter { fruit in
+    fruit != "banana"
+}
+
+ループ
+配列の要素を繰り返し処理するために for-in ループを使用することもできます。
+for-in ループを使用する主なメリットとして、break を使用してループを途中で終了したり、continue を使用して次の反復処理にスキップしたりすることができる点が挙げられます。
+
+let fruits = [ "apple", "banana", "cherry" ]
+
+// for-in ループを使用して配列の要素を繰り返し処理する
+for fruit in fruits {
+    print(fruit)
+}
+
+// continue を使用して "banana" をスキップする
+for fruit in fruits {
+    if fruit == "banana" {
+        continue
+    }
+    print(fruit)
+}
+
+// break を使用して "banana" でループを終了する
+for fruit in fruits {
+    if fruit == "banana" {
+        break
+    }
+    print(fruit)
+}
+
+可変の配列
+let キーワードを使用して配列を定義すると、その配列は不変となります。
+要素を追加、削除、または変更するためには、var キーワードを使用して配列を定義する必要があります。
+
+// 不変の配列を定義する
+let immutableFruits = [ "apple", "banana", "cherry" ]
+immutableFruits.append("orange") // --> Cannot use mutating member on immutable value: 'immutableFruits' is a 'let' constant
+
+// 可変の配列を定義する
+var mutableFruits = [ "apple", "banana", "cherry" ]
+mutableFruits.append("orange") // 追加できる
+
+要素を追加する
+append(_:) メソッドを使用して、配列の末尾に要素を追加することができます。
+
+var fruits = [ "apple", "banana", "cherry" ]
+fruits.append("orange")
+
+print(fruits) // --> ["apple", "banana", "cherry", "orange"]
+
+要素を削除する
+remove(at:) メソッドを使用して、指定したインデックスの要素を削除することができます。
+
+var fruits = [ "apple", "banana", "cherry" ]
+fruits.remove(at: 1)
+
+print(fruits) // --> ["apple", "cherry"]
+
+要素を置換する
+インデックスを使用して、配列の特定の要素を別の要素で置換することができます。
+
+var fruits = [ "apple", "banana", "cherry" ]
+fruits[0] = "orange"
+
+print(fruits) // --> ["orange", "banana", "cherry"]
+
+演習問題
+果物のリスト
+果物の名前が入った配列を作成して、その要素を for-in ループを使用してコンソールに出力してください。
+
+let fruits = [ "りんご", "バナナ", "さくらんぼ", "りんご", "バナナ", "りんご" ]
+
+りんごの数
+「果物のリスト」の配列に含まれる "りんご" の数をコンソールに出力してください。
+for-in ループを使用しても、配列のメソッドやプロパティを使用しても構いません。
+
+すきな果物を追加
+「果物のリスト」の配列に好きな果物を追加してください。
+fruits は不変の配列として定義されているため、可変の配列に変更する必要があります。
+
+奇数だけ出力
+1 から 10 までの数字が入った配列を作成して、奇数の要素だけをコンソールに出力してください。
+なお、filter(_:) メソッドは使用せず for-in ループを使用してください。
+
+let numbers = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+
+演習問題の解答例
+答えを隠す
+
+果物のリスト
+let fruits = [ "りんご", "バナナ", "さくらんぼ", "りんご", "バナナ", "りんご" ]
+for fruit in fruits {
+    print(fruit)
+}
+
+りんごの数
+let fruits = [ "りんご", "バナナ", "さくらんぼ", "りんご", "バナナ", "りんご" ]
+
+// for-in ループを使用する
+var count = 0
+for fruit in fruits {
+    if fruit == "りんご" {
+        count += 1
+    }
+}
+print(count) // --> 3
+
+// filter(_:) メソッドを使用する
+let filteredFruits = fruits.filter { fruit in
+    fruit == "りんご"
+}
+print(filteredFruits.count) // --> 3
+
+すきな果物を追加
+var fruits = [ "りんご", "バナナ", "さくらんぼ", "りんご", "バナナ", "りんご" ]
+fruits.append("メロン")
+
+奇数だけ出力
+let numbers = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+for number in numbers {
+    if number % 2 != 0 {
+        print(number)
+    }
+}
+
+今まで学習した内容に関する練習問題を解いてみてください。
+
+練習問題
+問1
+swift で以下のコードを実行するとエラーが発生します。 原因として最も適当なものは次のうちどれでしょうか。
+
+let primeList = [1, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+primeList[0] = 2
+
+×
+配列外にアクセスしようとしている
+×
+代入しようとしている値の型が Int 型でない
+
+○
+let で宣言された配列は変更することができない
+
+×
+綴りが間違っているため変更できない
+問2
+swift で以下のコードを実行するとエラーが発生します。 原因として最も適当なものは次のうちどれでしょうか。
+
+var primeList = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+prime[0] = "one"
+
+×
+配列の先頭の要素にアクセスする場合は 0 ではなく 1 を用いる必要があるため
+○
+Int 型の配列に Int 型以外の値を代入しようとしている
+×
+var で宣言されているため内容を変更することができない
+
+×
+配列へのアクセス方法が間違っている
+問3
+次のコードによって "Below freezing" が出力される回数として適当なものはどれでしょうか。
+
+var weeksTemperature = [12.0, 23.0, 2.3, -3.5, 43.4, 22.2, 19.9]
+weeksTemperature[3] = -23.0
+for temperature in weeksTemperature {
+    if temperature <= 0.00 {
+        print("Below freezing")
+    }
+}
+
+
+×
+0
+○
+1
+×
+2
+×
+3
+解説
+答えを隠す
+
+問1
+prime[0] = 2 は、 prime の 0 番目の要素を 2 に変更するというコードです。
+
+prime は let で宣言されているので定数です。
+
+let で宣言された配列は変更することができません。
+
+問2
+prime[0] = "one" は prime の 0 番目の要素を one に変更するというコードです。
+
+prime は var で宣言されているので要素を変更することができます。
+そして、今回は Int 型の配列になっています。
+
+そのため prime には Int 型のインスタンスしか入りません。
+しかし 2 行目では String 型のインスタンスを代入しようとしているためエラーになります。
+
+問3
+このコードは配列 weeksTemperature の要素全てに対して、 0.00 以下であれば "Below freezing" という メッセージを出力するようになっています。
+
+そのため、0.00 以下の要素の数を数えます。
+
+-23.0 が当てはまるため、 1 回になります。
+
+2行目で3番目の値を氷点下の -23.0 としていますが、 weeksTemperature[3] = -3.5 でもともと氷点下であったため結果に影響はありません。
+
+余談：
+
+目で見て数えるのは大変なので、コードを書くことで調べられます。
+配列のメソッドである filter(_:) を使用します。
+
+var weeksTemperature = [12.0, 23.0, 2.3, -3.5, 43.4, 22.2, 19.9]
+weeksTemperature[3] = -23.0
+let belowFreezing = weeksTemperature.filter({ temperature in temperature <= 0.00 })
+let belowFreezingCount = belowFreezing.count
+
+手作業は大変でミスもしやすいので、プログラムにやらせると便利です。
+
+まとめ
+多くのデータをまとめるのに配列はとても便利なものです。
+また for-in ループを使うことでそのデータをまとめて処理することができます。
+
+構造体
+「構造体」とは、関連するデータや操作をまとめる「型」の 1 つです。
+クラスと似ていますが、構造体は値型であることや継承できないことなどの違いがあります。
+クラスの方が機能が豊富ですが、構造体の方が扱いやすく、ほとんどの場合は構造体の使用が推奨されます。
+
+このセクションでは、構造体の基本を学びます。
+
+カスタム型
+Int や String などの基本的な型に加えて、ニーズに合った型を自分自身で定義することもできます。
+構造体を使用すると、簡単にカスタム型を作成できます。
+
+例えば、あるサービスのアカウントを表す Account という構造体を定義することができます。
+この構造体は ID, ユーザ名、メールアドレスなどのプロパティやメソッドを持ちます。
+
+また、構造体にイニシャライザを定義しない場合、デフォルトのイニシャライザを自動で作成してくれます。
+このイニシャライザを「メンバーワイズイニシャライザ」と呼びます。
+
+メンバーワイズイニシャライザは構造体の格納プロパティに対応する引数を取り、それらのプロパティを初期化します。
+
+struct Account {
+    let id: Int
+    let email: String
+    let username: String
+    var displayName: String
+
+    func getProfileImageURL() -> URL {
+        /* … */
+    }
+
+    /* … */
+}
+
+// Account のインスタンスを作成する
+let account = Account(id: 1, email: "sannennetaro@example.com", username: "sannennetaro", displayName: "三年寝太郎")
+
+print(account.displayName)
+print(account.email)
+print(account.getProfileImageURL())
+
+この Account という構造体を使用すると、アカウントに関する情報を簡単に扱うことができるようになります。
+このように、ニーズに合わせたカスタム型を定義することで、プログラムを分かりやすく、保守しやすくすることができます。
+
+可変性
+構造体のインスタンスは let で宣言された場合は不変となり、var で宣言された場合は可変となります。
+不変の構造体のプロパティは変更できませんが、可変の構造体のプロパティは変更できます。
+
+struct Account {
+    let id: Int
+    let email: String
+    let username: String
+    var displayName: String
+}
+
+// 不変の構造体のプロパティは変更できない
+let immutableAccount = Account(id: 1, email: "name@example.com", username: "name", displayName: "Name")
+immutableAccount.displayName = "New Name" // --> Cannot assign to property: 'immutableAccount' is a 'let' constant
+
+// 可変の構造体のプロパティは変更できる
+var mutableAccount = Account(id: 1, email: "name@example.com", username: "name", displayName: "Name")
+mutableAccount.displayName = "New Name"
+
+なお、構造体のプロパティをメソッドが変更する場合、そのメソッドを mutating キーワードを使用して定義する必要があります。
+
+struct Account {
+    let id: Int
+    let email: String
+    let username: String
+    var displayName: String
+
+    mutating func updateDisplayName(_ displayName: String) {
+        self.displayName = displayName
+    }
+}
+
+ペンギンのプロフィールを作ろう！
+ペンギンのプロフィールを扱うための Penguin 構造体を作成してください。
+また、Penguin 構造体のインスタンスを作成して、そのインスタンスから自己紹介を出力してみてください。
+
+ペンギンは名前 (name), 年齢 (age), お気に入りの食べ物 (favoriteFood) の情報を持っています。
+
+さらに、ペンギンは introduce() で簡単な自己紹介をすることができます。
+この自己紹介は "\(name)、\(age)歳、お気に入りの食べ物は\(favoriteFood)だよ！" という形式になります。
+
+お寿司の注文
+回転寿司店で注文を管理するための構造体を作成してみましょう。
+お寿司のネタや種類、そして値段を表すプロパティを持たせます。
+
+neta
+お寿司のネタ
+マグロ、サーモン、ネギトロなど
+type
+お寿司の種類
+にぎり、ちらし、巻き物など
+price
+お寿司の値段
+お寿司は値段に応じて皿の色が決まります。
+値段に応じた皿の色を返す計算プロパティ plateColor も追加しましょう。
+
+500 円以上：金
+351 円から 499 円：黒
+201 円から 350 円：赤
+200 円以下：黄
+そして、定義した Sushi 構造体を使用して、neta が "マグロ", type が "にぎり", price が 300 の注文を作成してください。
+また、どの色の皿で提供されるか確認してください。
+
+演習問題の解答例
+答えを隠す
+
+ペンギンのプロフィールを作ろう！
+struct Penguin {
+    let name: String
+    let age: Int
+    let favoriteFood: String
+
+    func introduce() -> String {
+        return "\(name)、\(age)歳、お気に入りの食べ物は\(favoriteFood)だよ！"
+    }
+}
+
+let penguin = Penguin(name: "かまくら", age: 5, favoriteFood: "ワカサギ")
+print(penguin.introduce())  // --> "かまくら、5歳、お気に入りの食べ物はワカサギだよ！"
+
+お寿司の注文
+struct Sushi {
+    var neta : String
+    let type : String
+    let price : Int
+
+    var plateColor : String {
+        if price > 500 {
+            return "金のお皿"
+        } else if price > 350 {
+            return "黒のお皿"
+        } else if price > 200 {
+            return "赤のお皿"
+        } else {
+            return "黄色のお皿"
+        }
+    }
+}
+let tunaSushi = Sushi(neta: "マグロ", type: "にぎり", price: 300)
+print(tunaSushi.plateColor)
+
+今まで学習した内容に関する練習問題を解いてみてください。
+
+練習問題
+問1
+以下のコードを実行すると構造体の定義でエラーが発生します。原因として最も適当なものはどれでしょうか。
+
+struct team {
+    var manager: player
+    var coach: player
+}
+
+struct pleyer {
+    let name: String
+    var position: String
+}
+
+×
+構造体の内部で別の構造体を宣言することはできないため
+×
+pleyer の宣言を team より前で行っておく必要があるため
+
+×
+構造体は後から代入するため必ず全て変数で宣言する必要があるため
+○
+綴りを間違えているため
+問2
+以下のコードを実行するとエラーが発生します。原因として最も適当なものはどれでしょうか。
+
+struct player {
+    let name: String
+    var position: String
+}
+
+let newPlayer = player(name: "Takashi", position: "GK")
+newPlayer.position = "FW"
+
+○
+インスタンスが定数で宣言されているため
+×
+構造体で position が定数で宣言されているため
+
+×
+構造体の値は変更することはできない
+×
+newPlayer.position ではなく newPlayer->position と記述する必要があるため
+
+解説
+答えを隠す
+
+問1
+struct team {
+    var manager: player
+    var coach: player
+}
+
+struct pleyer {
+    let name: String
+    var position: String
+}
+
+このコードをよく見ると team 型の各プロパティの型が player となっています。
+pleyer 型は定義していますが、 player 型は定義していないのでエラーとなっています。
+
+player を pleyer に修正すると正しいコードになります。
+しかし英単語的には player が正しいので team のプロパティの型名ではなく pleyer 型の 名前を修正すべきですね。
+
+問2
+struct player {
+    let name: String
+    var position: String
+}
+
+let newPlayer = player(name: "Takashi", position: "GK")
+newPlayer.position = "FW"
+
+player 型にて position は変数として定義されています。
+
+しかし、 player 型のインスタンス newPlayer は定数で宣言されました。
+
+定数で宣言されたインスタンスのプロパティは変更できません。
+
+もし newPlayer が変数で宣言されていれば position は変更できます。
+しかし name は定数なのでインスタンスが変数でも変更できません。
+name を変更したければ新しいインスタンスを作成する必要があります。
+
+少しややこしいので Playground で試してみてください。
+
+まとめ
+独自の型を宣言するとアプリケーションに適した形でデータを扱うことができるようになります。
+
+今回は構造体の作成、使用方法を学びました。
+
+構造体にはプロパティとメソッドを定義できます。
+
+定数と変数に関する不変・可変の扱いが混乱しがちなので注意しましょう。
+
+今回はここまでです。
+
+正解できなかった問題は Playground で試したりして復習をしておきましょう。
+
+お疲れさまでした！
+学習したことをSNSで報告しよう！
+
+
+
+このセクションの「プロパティ」や「メソッド」はインスタンスに属する「インスタンスプロパティ」や「インスタンスメソッド」を指します。
+一方、型に属するプロパティやメソッドは「型プロパティ」や「型メソッド」と呼ばれます。
+このセクションでは、型プロパティや型メソッドについては扱いません。 ↩︎
+
+リテラルとは、ソースコードに直接記述された値のことです。 ↩︎
 
 ---
 ## リンク
