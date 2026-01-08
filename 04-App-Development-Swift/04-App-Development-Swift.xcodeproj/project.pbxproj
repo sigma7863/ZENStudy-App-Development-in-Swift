@@ -27,6 +27,7 @@
 		B77C361C2F0D41B3001D1920 /* 04-App-Development-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "04-App-Development-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B77C36322F0D41B7001D1920 /* 04-App-Development-SwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "04-App-Development-SwiftTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B77C363C2F0D41B7001D1920 /* 04-App-Development-SwiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "04-App-Development-SwiftUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B79E59372F0FC8A200F8F8DF /* 04-App-Development-Swift-MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = "04-App-Development-Swift-MyPlayground.playground"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -88,6 +89,7 @@
 		B77C36132F0D41B3001D1920 = {
 			isa = PBXGroup;
 			children = (
+				B79E59372F0FC8A200F8F8DF /* 04-App-Development-Swift-MyPlayground.playground */,
 				B77C361E2F0D41B3001D1920 /* 04-App-Development-Swift */,
 				B77C36352F0D41B7001D1920 /* 04-App-Development-SwiftTests */,
 				B77C363F2F0D41B7001D1920 /* 04-App-Development-SwiftUITests */,
